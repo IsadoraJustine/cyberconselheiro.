@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🤖 CyberConselheiro</title>
+<style>
+  /* Fundo animado estilo hacker */
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: radial-gradient(circle at center, #001, #000);
+    overflow: hidden;
+    color: #00ff9f;
+  }
+
+  /* Efeito de código caindo tipo "Matrix" */
+  canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+  }
+
+  /* Área principal do app */
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 700px;
+    margin: 50px auto;
+    background: rgba(10, 10, 30, 0.9);
+    border: 2px solid #00ff9f;
+    border-radius: 20px;
+    box-shadow: 0 0 25px #00ff9f66;
+    padding: 30px;
+    text-align: center;
+  }
+
+  h1 {
+    font-size: 32px;
+    color: #00ffcc;
+    text-shadow: 0 0 15px #00ffcc;
+  }
+
+  #chat {
+    background: #010915;
+    border: 1px solid #00ffaa44;
+    border-radius: 10px;
+    padding: 10px;
+    height: 400px;
+    overflow-y: auto;
+    color: #00ffaa;
+    text-align: left;
+    margin-bottom: 15px;
+    font-size: 16px;
+  }
+
+  input {
+    width: 75%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    background: #02121f;
+    color: #00ffcc;
+    font-size: 16px;
+  }
+
+  button {
+    padding: 12px 20px;
+    margin-left: 5px;
+    border: none;
+    border-radius: 10px;
+    background: #00ff9f;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 16px;
+  }
+
+  button:hover {
+    background: #00ffaa;
+    box-shadow: 0 0 10px #00ffaa;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="matrix"></canvas>
+
+<div class="container">
+  <h1>🤖 CyberConselheiro</h1>
+  <div id="chat"></div>
+  <input id="input" type="text" placeholder="Digite sua dúvida sobre segurança digital...">
+  <button onclick="enviar()">Enviar</button>
+</div>
+
+<script>
+  // Efeito Matrix
+  const canvas = document.getElementById('matrix');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const letras = "01#@₿$%&";
+  const fontSize = 16;
+  const columns = canvas.width / fontSize;
+  const drops = Array(Math.floor(columns)).fill(1);
+
+  function drawMatrix() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#00ff9f";
+    ctx.font = fontSize + "px monospace";
+    for (let i = 0; i < drops.length; i++) {
+      const text = letras[Math.floor(Math.random() * letras.length)];
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975)
+        drops[i] = 0;
+      drops[i]++;
+    }
+  }
+  setInterval(drawMatrix, 40);
+
+  // Perguntas e respostas
+  const respostas = {
+    // SENHAS
+    "como criar uma senha forte": "Use senhas longas, misture letras maiúsculas, minúsculas, números e símbolos. Evite datas ou nomes.",
+    "posso usar a mesma senha em varios sites": "Não! Cada site deve ter uma senha diferente para proteger suas contas.",
+    "o que é autenticação em 2 etapas": "É um sistema que pede uma segunda verificação além da senha, como código SMS ou app autenticador.",
+    "qual a diferença entre senha e pin": "O PIN é geralmente curto e numérico, usado para desbloqueio rápido; a senha é mais longa e complexa.",
+    "é seguro usar um gerenciador de senhas": "Sim, eles guardam senhas fortes e únicas, protegendo suas contas.",
+    
+    // PHISHING E GOLPES
+    "o que é phishing": "Phishing é um golpe onde criminosos tentam enganar você com mensagens falsas para roubar dados.",
+    "como identificar um e-mail falso": "Cheque remetente, links suspeitos, erros de português e mensagens urgentes. Sempre confirme antes de clicar.",
+    "recebi um link estranho": "Não clique! Verifique o remetente, use antivírus e pesquise sobre o link.",
+    "como hackers enganam online": "Eles usam engenharia social, mensagens falsas e sites parecidos com os verdadeiros.",
+    "o que fazer se cair em um golpe": "Mude senhas imediatamente, ative 2FA e informe a instituição ou serviço afetado.",
+
+    // REDES E WIFI
+    "é seguro usar wifi público": "Evite usar sem VPN; redes públicas podem permitir que hackers acessem seus dados.",
+    "o que é uma vpn": "VPN cria uma conexão segura e criptografada entre você e a internet.",
+    "como proteger dados em redes públicas": "Use VPN, evite acessar contas sensíveis e prefira sites com HTTPS.",
+    "qual a diferença entre http e https": "HTTPS é seguro, com criptografia; HTTP não protege os dados.",
+    "o que significa rede segura": "Uma rede com senha forte, criptografia e monitoramento contra invasões.",
+
+    // VIRUS E MALWARE
+    "o que é um vírus de computador": "Um programa malicioso que se espalha entre dispositivos e causa danos ou roubo de dados.",
+    "como malware entra no celular": "Através de downloads suspeitos, links perigosos, aplicativos não confiáveis ou anexos de e-mail.",
+    "qual a diferença entre vírus e trojan": "Vírus se espalha sozinho; trojan finge ser algo seguro para enganar o usuário.",
+    "como evitar vírus e ransomware": "Atualize sistemas, não clique em links suspeitos e use antivírus confiável.",
+    "um antivírus gratuito protege bem": "Sim, mas geralmente oferece proteção básica. Para maior segurança, prefira versões pagas ou completas.",
+
+    // PRIVACIDADE
+    "como proteger minha privacidade nas redes sociais": "Configure perfis privados, evite compartilhar dados pessoais e revise permissões de apps.",
+    "posso apagar meus dados da internet": "Sim, mas depende do serviço. Revise contas, solicite remoção de dados e use ferramentas de privacidade.",
+    "o que é rastreamento online": "É quando sites ou apps monitoram seu comportamento e coletam dados sobre você.",
+    "devo compartilhar localização": "Evite compartilhar com apps desnecessários ou em redes públicas para proteger sua privacidade.",
+    "como ver quais apps têm acesso aos meus dados": "No celular, vá em Configurações → Privacidade → Permissões de aplicativos.",
+
+    // BOAS PRATICAS
+    "como identificar sites confiaveis": "Procure HTTPS, avalie o design, leia avaliações e evite links suspeitos.",
+    "o que é engenharia social": "Técnica que hackers usam para enganar pessoas a revelar informações sensíveis.",
+    "como criar backups seguros": "Use HD externo, nuvem confiável e criptografia para proteger arquivos importantes.",
+    "é seguro clicar em links de promoções": "Só se vier de fontes confiáveis. Links desconhecidos podem ser golpes.",
+    "como se proteger de hackers em jogos online": "Use senhas fortes, evite downloads suspeitos e habilite autenticação de dois fatores.",
+
+    // OUTRAS PERGUNTAS
+    "como saber se fui hackeado": "Verifique atividades suspeitas em contas, senhas alteradas ou e-mails desconhecidos.",
+    "o que é malware": "Software malicioso projetado para causar danos ou roubar informações.",
+    "como se proteger de spywares": "Não instale apps desconhecidos, atualize seu dispositivo e use antivírus.",
+    "o que é ransomware": "Um malware que bloqueia arquivos e pede resgate para liberá-los.",
+    "como evitar ataques de phishing": "Não clique em links suspeitos, verifique remetentes e ative autenticação de 2 fatores.",
+    "como criar senhas que lembro facilmente": "Use frases ou combinações de palavras e números que só você entenda.",
+    "por que usar antivírus": "Protege contra vírus, malware e outros ataques digitais.",
+    "como manter privacidade em redes sociais": "Reveja postagens, evite informações sensíveis e ajuste configurações de privacidade.",
+    "o que é spam": "Mensagens não solicitadas, geralmente publicitárias ou com links maliciosos.",
+    "como reconhecer e-mails falsos": "Cheque remetente, links, erros de português e tom de urgência.",
+
+    "o que é um hacker": "Alguém que entende profundamente de sistemas e tecnologia; nem sempre é criminoso.",
+    "hacker é sempre criminoso": "Não, existem hackers éticos que ajudam a proteger sistemas.",
+    "o que é criptografia": "Transformar dados em códigos para que apenas pessoas autorizadas possam ler.",
+    "como funciona um firewall": "Ele monitora e bloqueia tráfego suspeito na sua rede ou computador.",
+    "o que é phishing por telefone": "Golpe por ligação ou SMS tentando enganar a pessoa a fornecer dados.",
+    "como criar senha para celular": "Use PIN + senha complexa, evite números óbvios como 1234.",
+    "é seguro salvar senhas no navegador": "Pode ser prático, mas é mais seguro usar gerenciador de senhas.",
+    "o que é backdoor": "Uma entrada secreta em um sistema que hackers podem usar para acesso não autorizado.",
+    "como se proteger de backdoors": "Atualize softwares, use antivírus e monitoramento de rede.",
+    "como evitar fraudes online": "Nunca compartilhe dados com desconhecidos e cheque links antes de clicar.",
+
+    "o que é engenharia social em jogos": "Hackers tentam enganar jogadores para roubar contas ou dados.",
+    "como proteger fotos e arquivos online": "Use serviços confiáveis, senhas fortes e backups criptografados.",
+    "o que é scan de rede": "Técnica usada para encontrar vulnerabilidades em redes.",
+    "como reconhecer sites falsos": "Cheque HTTPS, domínios suspeitos e erros de design ou português.",
+    "o que é trojan": "Malware que finge ser programa seguro para enganar o usuário.",
+    "como evitar trojans": "Não baixe arquivos de fontes desconhecidas.",
+    "o que é brute force": "Ataque tentando todas as combinações de senha até encontrar a correta.",
+    "como se proteger de brute force": "Use senhas longas, complexas e autenticação de dois fatores.",
+    "como saber se meu computador tem vírus": "Fique atento a lentidão, pop-ups estranhos ou programas desconhecidos.",
+    "como remover vírus": "Use antivírus confiável, faça backup de dados importantes e, se necessário, formate o dispositivo."
+  };
+
+  // Função do chat
+  function enviar() {
+    const input = document.getElementById('input');
+    const chat = document.getElementById('chat');
+    const pergunta = input.value.toLowerCase().trim();
+    if (pergunta === "") return;
+
+    chat.innerHTML += `<p><b>Você:</b> ${input.value}</p>`;
+
+    let resposta = "🤖 Não entendi... tente perguntar sobre senha, phishing, vírus, Wi-Fi ou privacidade.";
+    for (const chave in respostas) {
+      if (pergunta.includes(chave)) {
+        resposta = "🤖 " + respostas[chave];
+        break;
+      }
+    }
+
+    chat.innerHTML += `<p>${resposta}</p>`;
+    chat.scrollTop = chat.scrollHeight;
+    input.value = "";
+  }
+</script>
+
+</body>
+</html>
